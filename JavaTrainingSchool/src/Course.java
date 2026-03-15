@@ -18,10 +18,10 @@ public class Course {
     }
 
     public int getStatus() {
-        if (this.daysUntilStarts > 0){
+        if (this.daysUntilStarts > 0) {
             return this.daysUntilStarts * -1;
         }
-        else if (this.daysToRun > 0){
+        else if (this.daysToRun > 0) {
             return this.daysToRun;
         }
         return 0;
@@ -32,6 +32,12 @@ public class Course {
             this.daysUntilStarts--;
         }
         else if (this.daysToRun > 0) {
+            this.daysToRun--;
+        }
+        else if (this.daysToRun == 0) {
+            for (Student student : enrolledStudents) {
+                student.graduate(subject);
+            }
             this.daysToRun--;
         }
     }
