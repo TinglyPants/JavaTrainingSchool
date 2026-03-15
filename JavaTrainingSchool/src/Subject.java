@@ -4,30 +4,30 @@ public class Subject {
     private int duration;
     private String description;
 
-    public Subject(int id, int specialism, int duration, String description){
+    public Subject(int id, int specialism, int duration, String description) {
         this.id = id;
         this.specialism = specialism;
         this.duration = duration;
         this.description = description;
     }
 
-    public int getID(){
+    public int getID() {
         return this.id;
     }
 
-    public int getSpecialism(){
+    public int getSpecialism() {
         return this.specialism;
     }
 
-    public int getDuration(){
+    public int getDuration() {
         return this.duration;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return this.description;
     }
 
-    public void setDescription(String description){
+    public void setDescription(String description) {
         this.description = description;
     }
 }

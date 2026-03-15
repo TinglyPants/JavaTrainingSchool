@@ -3,25 +3,25 @@ public class Person {
     private char gender;
     private int age;
 
-    public Person(String name, char gender, int age){
+    public Person(String name, char gender, int age) {
         this.name = name;
         this.gender = gender;
         this.age = age;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public char getGender(){
+    public char getGender() {
         return this.gender;
     }
 
-    public void setAge(int age){
+    public void setAge(int age) {
         this.age = age;
     }
 
-    public int getAge(){
+    public int getAge() {
         return this.age;
     }
 }
