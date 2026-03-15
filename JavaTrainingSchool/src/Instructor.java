@@ -5,11 +5,17 @@ public abstract class Instructor extends Person {
         super(name, gender, age);
     }
 
-    public abstract void assignCourse(Course course);
+    public void assignCourse(Course course) {
+        this.assignedCourse = course;
+    };
 
-    public abstract void unassignCourse();
+    public void unassignCourse() {
+        this.assignedCourse = null;
+    };
 
-    public abstract Course getAssignedCourse();
+    public Course getAssignedCourse() {
+        return this.assignedCourse;
+    };
 
     public abstract boolean canTeach(Subject subject);
 }
