@@ -9,8 +9,9 @@ public class Course {
     private ArrayList<Instructor> instructors;
     private boolean isCancelled;
 
-    public Course(Subject subject) {
+    public Course(Subject subject, int daysUntilStarts) {
         this.subject = subject;
+        this.daysUntilStarts = daysUntilStarts;
         this.daysToRun = subject.getDuration();
         this.enrolledStudents = new ArrayList<>();
         this.instructors = new ArrayList<>();
