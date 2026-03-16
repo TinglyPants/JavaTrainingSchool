@@ -1,7 +1,206 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
 public class Administrator {
+
+    public static void main(String[] args) {
+        // Parsing Arguments
+        if (args.length < 2) {
+            System.out.println("Please provide a sufficient number of arguments!");
+            return;
+        }
+
+        String configurationFileName = args[0];
+        int days;
+        try {
+            days = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid format for days: " + args[1]);
+            return;
+        }
+
+        // Reading configuration file
+        ArrayList<String> lines;
+        try {
+            lines = parseConfigurationFile(configurationFileName);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        // Load School
+        School school;
+        try {
+            school = loadSchoolFromConfiguration(lines);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        // Load Subjects into school
+        try {
+            for (Subject subject : loadSubjectsFromConfiguration(lines)) {
+                school.add(subject);
+            }
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        // Load Students into school
+        try {
+            for (Student student : loadStudentsFromConfiguration(lines)) {
+                school.add(student);
+            }
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        // Load Instructors into school
+        try {
+            for (Instructor instructor : loadInstructorsFromConfiguration(lines)) {
+                school.add(instructor);
+            }
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        // Run administrator
+        Administrator administrator = new Administrator(school);
+        administrator.run(days);
+    }
+
+    private static ArrayList<String> parseConfigurationFile(String configurationFileName) {
+        ArrayList<String> lines = new ArrayList<>();
+
+        BufferedReader bufferedReader;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(configurationFileName));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Could not load configuration file: " + configurationFileName);
+        }
+
+        try {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (!line.isBlank()) {
+                    lines.add(line);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading from configuration file: " + configurationFileName);
+        }
+
+        return lines;
+    }
+
+    private static School loadSchoolFromConfiguration(ArrayList<String> configurationFileLines) {
+        try {
+            for (String line : configurationFileLines) {
+                String[] parts = line.split(":");
+                if (parts[0].equals("school")) {
+                    return new School(parts[1]);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid formatting detected in configuration file!");
+        }
+
+        throw new RuntimeException("Configuration file missing school!");
+    }
+
+    private static ArrayList<Subject> loadSubjectsFromConfiguration(ArrayList<String> configurationFileLines) {
+        ArrayList<Subject> subjects = new ArrayList<>();
+        try {
+            for (String line : configurationFileLines) {
+                String[] parts = line.split(":");
+                if (parts[0].equals("subject")) {
+                    String[] args = parts[1].split(",");
+                    String description = args[0];
+                    int subjectID = Integer.parseInt(args[1]);
+                    int specialismID = Integer.parseInt(args[2]);
+                    int duration = Integer.parseInt(args[3]);
+
+                    subjects.add(new Subject(subjectID, specialismID, duration, description));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid formatting detected in configuration file!");
+        }
+
+        return subjects;
+    }
+
+    private static ArrayList<Student> loadStudentsFromConfiguration(ArrayList<String> configurationFileLines) {
+        ArrayList<Student> students = new ArrayList<>();
+        try {
+            for (String line : configurationFileLines) {
+                String[] parts = line.split(":");
+                if (parts[0].equals("student")) {
+                    String[] args = parts[1].split(",");
+                    String name = args[0];
+                    char gender = args[1].charAt(0);
+                    int age = Integer.parseInt(args[2]);
+
+                    students.add(new Student(name, gender, age));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid formatting detected in configuration file!");
+        }
+
+        return students;
+    }
+
+    private static ArrayList<Instructor> loadInstructorsFromConfiguration(ArrayList<String> configurationFileLines) {
+        ArrayList<Instructor> instructors = new ArrayList<>();
+        try {
+            for (String line : configurationFileLines) {
+                String[] parts = line.split(":");
+                if (parts[0].equals("Teacher")) {
+                    String[] args = parts[1].split(",");
+                    String name = args[0];
+                    char gender = args[1].charAt(0);
+                    int age = Integer.parseInt(args[2]);
+
+                    instructors.add(new Teacher(name, gender, age));
+                } else if (parts[0].equals("Demonstrator")) {
+                    String[] args = parts[1].split(",");
+                    String name = args[0];
+                    char gender = args[1].charAt(0);
+                    int age = Integer.parseInt(args[2]);
+
+                    instructors.add(new Demonstrator(name, gender, age));
+                } else if (parts[0].equals("OOTrainer")) {
+                    String[] args = parts[1].split(",");
+                    String name = args[0];
+                    char gender = args[1].charAt(0);
+                    int age = Integer.parseInt(args[2]);
+
+                    instructors.add(new OOTrainer(name, gender, age));
+                } else if (parts[0].equals("GUITrainer")) {
+                    String[] args = parts[1].split(",");
+                    String name = args[0];
+                    char gender = args[1].charAt(0);
+                    int age = Integer.parseInt(args[2]);
+
+                    instructors.add(new GUITrainer(name, gender, age));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid formatting detected in configuration file!");
+        }
+
+        return instructors;
+    }
+
     private School school;
 
     public Administrator(School school) {
