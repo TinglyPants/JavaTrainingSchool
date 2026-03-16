@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 public class School {
@@ -154,10 +155,12 @@ public class School {
         }
 
         // Remove any finished or canceled courses
-        for (Course course : this.getCourses()) {
-            // Courses are automatically canceled when they finish
-            if (course.isCancelled()) {
-                this.getCourses().remove(course);
+        Iterator<Course> courseIterator = this.getCourses().iterator();
+        while (courseIterator.hasNext()) {
+            Course next = courseIterator.next();
+            // Courses that are finished are canceled automatically
+            if (next.isCancelled()){
+                courseIterator.remove();
             }
         }
     }
@@ -178,7 +181,12 @@ public class School {
                 eligibleInstructors.add(instructor);
             }
         }
-        Instructor chosenInstructor = eligibleInstructors.get(new Random().nextInt(eligibleInstructors.size()));
-        course.setInstructor(chosenInstructor);
+        try {
+            Instructor chosenInstructor = eligibleInstructors.get(new Random().nextInt(eligibleInstructors.size()));
+            course.setInstructor(chosenInstructor);
+        } catch (IllegalArgumentException e) {
+            // No eligible instructors, return
+            return;
+        }
     }
 }
