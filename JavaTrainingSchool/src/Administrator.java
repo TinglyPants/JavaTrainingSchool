@@ -24,49 +24,9 @@ public class Administrator {
             return;
         }
 
-        // Reading configuration file
-        ArrayList<String> lines;
-        try {
-            lines = parseConfigurationFile(configurationFileName);
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        // Load School
         School school;
         try {
-            school = loadSchoolFromConfiguration(lines);
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        // Load Subjects into school
-        try {
-            for (Subject subject : loadSubjectsFromConfiguration(lines)) {
-                school.add(subject);
-            }
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        // Load Students into school
-        try {
-            for (Student student : loadStudentsFromConfiguration(lines)) {
-                school.add(student);
-            }
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        // Load Instructors into school
-        try {
-            for (Instructor instructor : loadInstructorsFromConfiguration(lines)) {
-                school.add(instructor);
-            }
+            school = buildSchoolFromConfigurationFile(configurationFileName);
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
             return;
@@ -75,6 +35,34 @@ public class Administrator {
         // Run administrator
         Administrator administrator = new Administrator(school);
         administrator.run(days);
+    }
+
+    private static School buildSchoolFromConfigurationFile(String configurationFileName) {
+        // Reading configuration file
+        ArrayList<String> lines;
+        lines = parseConfigurationFile(configurationFileName);
+
+        // Load School
+        School school;
+        school = loadSchoolFromConfiguration(lines);
+
+        // Load Subjects into school
+        for (Subject subject : loadSubjectsFromConfiguration(lines)) {
+            school.add(subject);
+        }
+
+        // Load Students into school
+        for (Student student : loadStudentsFromConfiguration(lines)) {
+            school.add(student);
+        }
+
+
+        // Load Instructors into school
+        for (Instructor instructor : loadInstructorsFromConfiguration(lines)) {
+            school.add(instructor);
+        }
+
+        return school;
     }
 
     private static ArrayList<String> parseConfigurationFile(String configurationFileName) {
