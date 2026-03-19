@@ -1,4 +1,6 @@
-public class Teacher extends Instructor {
+import java.io.Serializable;
+
+public class Teacher extends Instructor implements Serializable {
     public Teacher(String name, char gender, int age) {
         super(name, gender, age);
     }

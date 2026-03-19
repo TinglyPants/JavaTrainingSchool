@@ -1,4 +1,6 @@
-public class GUITrainer extends Instructor{
+import java.io.Serializable;
+
+public class GUITrainer extends Instructor implements Serializable {
     public GUITrainer(String name, char gender, int age) {
         super(name, gender, age);
     }

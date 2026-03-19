@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -24,48 +21,12 @@ public class Administrator {
             return;
         }
 
-        // Reading configuration file
-        ArrayList<String> lines;
-        try {
-            lines = parseConfigurationFile(configurationFileName);
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        // Load School
         School school;
         try {
-            school = loadSchoolFromConfiguration(lines);
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        // Load Subjects into school
-        try {
-            for (Subject subject : loadSubjectsFromConfiguration(lines)) {
-                school.add(subject);
-            }
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        // Load Students into school
-        try {
-            for (Student student : loadStudentsFromConfiguration(lines)) {
-                school.add(student);
-            }
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        // Load Instructors into school
-        try {
-            for (Instructor instructor : loadInstructorsFromConfiguration(lines)) {
-                school.add(instructor);
+            if (configurationFileName.endsWith("save.txt")){
+                school = buildSchoolFromSaveFile(configurationFileName);
+            } else {
+                school = buildSchoolFromConfigurationFile(configurationFileName);
             }
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
@@ -75,6 +36,48 @@ public class Administrator {
         // Run administrator
         Administrator administrator = new Administrator(school);
         administrator.run(days);
+    }
+
+    private static School buildSchoolFromSaveFile(String configurationFileName) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(configurationFileName);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            School school = (School) objectInputStream.readObject();
+            objectInputStream.close();
+
+            return school;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load save file: " + configurationFileName);
+        }
+    }
+
+    private static School buildSchoolFromConfigurationFile(String configurationFileName) {
+        // Reading configuration file
+        ArrayList<String> lines;
+        lines = parseConfigurationFile(configurationFileName);
+
+        // Load School
+        School school;
+        school = loadSchoolFromConfiguration(lines);
+
+        // Load Subjects into school
+        for (Subject subject : loadSubjectsFromConfiguration(lines)) {
+            school.add(subject);
+        }
+
+        // Load Students into school
+        for (Student student : loadStudentsFromConfiguration(lines)) {
+            school.add(student);
+        }
+
+
+        // Load Instructors into school
+        for (Instructor instructor : loadInstructorsFromConfiguration(lines)) {
+            school.add(instructor);
+        }
+
+        return school;
     }
 
     private static ArrayList<String> parseConfigurationFile(String configurationFileName) {
@@ -373,6 +376,19 @@ public class Administrator {
             } else {
                 System.out.println("  - Instrutor { name = %s }".formatted(instructor.getName()));
             }
+        }
+    }
+
+    public void saveSimulation(String filename) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(filename + ".save.txt", false);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            objectOutputStream.writeObject(this.school);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+        } catch (Exception e) {
+            System.out.println("Unable to save to file: " + filename + ".save.txt");
         }
     }
 }

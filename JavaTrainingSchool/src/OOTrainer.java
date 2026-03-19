@@ -1,4 +1,6 @@
-public class OOTrainer extends Instructor {
+import java.io.Serializable;
+
+public class OOTrainer extends Instructor implements Serializable {
     public OOTrainer(String name, char gender, int age) {
         super(name, gender, age);
     }

@@ -1,8 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-public class School {
+public class School implements Serializable {
     private String name;
     private ArrayList<Student> students;
     private ArrayList<Instructor> instructors;
