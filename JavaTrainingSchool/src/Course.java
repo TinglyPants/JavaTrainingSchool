@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class Course {
+public class Course implements Serializable {
     private Subject subject;
     private int daysUntilStarts;
     private int daysToRun;

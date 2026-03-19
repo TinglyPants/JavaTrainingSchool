@@ -1,4 +1,6 @@
-public class Subject {
+import java.io.Serializable;
+
+public class Subject implements Serializable {
     private int id;
     private int specialism;
     private int duration;

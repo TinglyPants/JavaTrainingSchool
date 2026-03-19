@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -26,7 +23,11 @@ public class Administrator {
 
         School school;
         try {
-            school = buildSchoolFromConfigurationFile(configurationFileName);
+            if (configurationFileName.endsWith("save.txt")){
+                school = buildSchoolFromSaveFile(configurationFileName);
+            } else {
+                school = buildSchoolFromConfigurationFile(configurationFileName);
+            }
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
             return;
@@ -35,6 +36,20 @@ public class Administrator {
         // Run administrator
         Administrator administrator = new Administrator(school);
         administrator.run(days);
+    }
+
+    private static School buildSchoolFromSaveFile(String configurationFileName) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(configurationFileName);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            School school = (School) objectInputStream.readObject();
+            objectInputStream.close();
+
+            return school;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load save file: " + configurationFileName);
+        }
     }
 
     private static School buildSchoolFromConfigurationFile(String configurationFileName) {
@@ -361,6 +376,19 @@ public class Administrator {
             } else {
                 System.out.println("  - Instrutor { name = %s }".formatted(instructor.getName()));
             }
+        }
+    }
+
+    public void saveSimulation(String filename) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(filename + ".save.txt", false);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            objectOutputStream.writeObject(this.school);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+        } catch (Exception e) {
+            System.out.println("Unable to save to file: " + filename + ".save.txt");
         }
     }
 }

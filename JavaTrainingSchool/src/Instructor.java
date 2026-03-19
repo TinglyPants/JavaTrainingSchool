@@ -1,4 +1,6 @@
-public abstract class Instructor extends Person {
+import java.io.Serializable;
+
+public abstract class Instructor extends Person implements Serializable {
     private Course assignedCourse;
 
     public Instructor(String name, char gender, int age) {
